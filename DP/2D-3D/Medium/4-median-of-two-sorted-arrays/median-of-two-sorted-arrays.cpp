@@ -1,78 +1,38 @@
-#include <vector>
-#include <algorithm>
-#include <climits>
-
 class Solution {
 public:
-    double findMedianSortedArrays(std::vector<int>& nums1, std::vector<int>& nums2) {
-        // Ensure nums1 is smaller to avoid negative cuts in nums2
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
         if (nums1.size() > nums2.size()) {
             return findMedianSortedArrays(nums2, nums1);
         }
 
-        int n1 = nums1.size();
-        int n2 = nums2.size();
-        int total = n1 + n2;
+        long long n1 = nums1.size();
+        long long n2 = nums2.size();
+        
+        long long hv = (n1 + n2 + 1)/2;
+        long long low = 0, high = n1;
 
-        // ====================================================
-        // CASE 1: EVEN TOTAL LENGTH
-        // ====================================================
-        if (total % 2 == 0) {
-            int half = total / 2; 
-            int low = 0, high = n1;
+        while(low <= high){
+            long long mid1 = low + (high - low) / 2;
+            long long mid2 = hv - mid1;
+            long long l1, l2, r1, r2;
 
-            while (low <= high) {
-                int cut1 = low + (high - low) / 2;
-                int cut2 = half - cut1;
+            if(mid1 == 0) l1 = INT_MIN;
+            else l1 = nums1[mid1-1];
+            if(mid2 == 0) l2 = INT_MIN;
+            else l2 = nums2[mid2-1];
+            if(mid1 == n1) r1 = INT_MAX;
+            else r1 = nums1[mid1];
+            if(mid2 == n2) r2 = INT_MAX;
+            else r2 = nums2[mid2];
 
-                // Pick values (or INT_MIN / INT_MAX if cut is at boundary)
-                int l1 = (cut1 == 0) ? INT_MIN : nums1[cut1 - 1];
-                int l2 = (cut2 == 0) ? INT_MIN : nums2[cut2 - 1];
-                int r1 = (cut1 == n1) ? INT_MAX : nums1[cut1];
-                int r2 = (cut2 == n2) ? INT_MAX : nums2[cut2];
-
-                // Check valid partition
-                if (l1 <= r2 && l2 <= r1) {
-                    return (max(l1, l2) + min(r1, r2)) / 2.0;
-                } 
-                else if (l1 > r2) {
-                    high = cut1 - 1;
-                } 
-                else {
-                    low = cut1 + 1;
-                }
+            if(l1 <= r2 && l2 <= r1){
+                if((n1+n2) % 2 == 0) return (double)(max(l1, l2) + min(r1, r2)) / 2.0;
+                else return max(l1, l2);
             }
-        } 
-        // ====================================================
-        // CASE 2: ODD TOTAL LENGTH (e.g., total = 7)
-        // ====================================================
-        else {
-            int half = (total + 1) / 2; // Left side gets 1 extra element
-            int low = 0, high = n1;
+            else if(l1 > r2) high = mid1 - 1;
+            else low = mid1 + 1;
 
-            while (low <= high) {
-                int cut1 = low + (high - low) / 2;
-                int cut2 = half - cut1;
-
-                int l1 = (cut1 == 0) ? INT_MIN : nums1[cut1 - 1];
-                int l2 = (cut2 == 0) ? INT_MIN : nums2[cut2 - 1];
-                int r1 = (cut1 == n1) ? INT_MAX : nums1[cut1];
-                int r2 = (cut2 == n2) ? INT_MAX : nums2[cut2];
-
-                // Check valid partition
-                if (l1 <= r2 && l2 <= r1) {
-                    // The median is simply the largest element in the left half
-                    return max(l1, l2);
-                } 
-                else if (l1 > r2) {
-                    high = cut1 - 1;
-                } 
-                else {
-                    low = cut1 + 1;
-                }
-            }
         }
-
         return 0.0;
     }
 };
