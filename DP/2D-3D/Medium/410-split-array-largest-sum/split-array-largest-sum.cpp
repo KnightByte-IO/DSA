@@ -1,33 +1,33 @@
 class Solution {
 public:
-    int check(vector<int>& num, int mid){
-        int count = 1;
-        int student = 0;
-        for(int i = 0; i < num.size(); i++){
-            if(student + num[i] <= mid){
-                student += num[i];
+    long long check(vector<int>& nums, int sum){
+        long long count = 1;
+        long long add = 0;
+        for(long long i = 0; i < nums.size(); i++){
+            if(add + nums[i] <= sum){
+                add += nums[i];
             }
             else{
                 count++;
-                student = num[i];
+                add = nums[i];
             }
         }
+
         return count;
     }
     int splitArray(vector<int>& nums, int k) {
-        int low = *max_element(nums.begin(), nums.end());
-        int high = accumulate(nums.begin(), nums.end(), 0);
+        long long n = nums.size();
+        long long l = *max_element(nums.begin(), nums.end());
+        long long h = accumulate(nums.begin(), nums.end(), 0LL);
 
-        while(low <= high){
-            int mid = low + (high - low) / 2;
-
-            if(check(nums, mid) > k){
-                low = mid + 1;
-            }
-            else{
-                high = mid - 1;
-            }
+        while(l <= h){
+            long long mid = l + (h - l) / 2;
+            if(check(nums, mid) > k)
+                l = mid + 1;
+            else
+                h = mid - 1;
         }
-        return low;
+
+        return l;
     }
 };
